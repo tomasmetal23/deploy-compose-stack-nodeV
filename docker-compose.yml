@@ -1,0 +1,31 @@
+version: '3'
+
+services:
+  casa-backend:
+    tty: true # Enables debugging capabilities when attached to this container. 
+    build: ./back
+    restart: always
+    command: sh -c '/etc/init.d/nginx start && npm start'
+    volumes:
+      - casa-back:/app/api-casa-de-cambio
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.casa-backend.entrypoints=websecure"
+      - "traefik.http.routers.casa-backend.rule=Host(`example.com.ve`)"
+      - "traefik.http.routers.casa-backend.tls.certresolver=lets-encr"
+
+  casa-frontend:
+    tty: true # Enables debugging capabilities when attached to this container.
+    restart: always
+    build: ./front
+    volumes:
+      - casa-front:/app/app-casa-cambio
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.casa-frontend.entrypoints=websecure"
+      - "traefik.http.routers.casa-frontend.rule=Host(`example.com.ve`)"
+      - "traefik.http.routers.casa-frontend.tls.certresolver=lets-encr"
+
+volumes:
+  casa-back:
+  casa-front:
